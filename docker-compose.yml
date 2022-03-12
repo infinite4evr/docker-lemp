@@ -1,0 +1,80 @@
+version: "3.9"
+
+services:
+  msyql:
+    build:
+      context: ./docker/mysql
+    container_name: ${APP_NAME:?err}-mysql
+    restart: unless-stopped
+    volumes:
+      - ./app/mysql-db/:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - proxynet
+
+  php-fpm:
+    build:
+      context: ./docker/php-fpm
+    container_name: ${APP_NAME:?err}-php-fpm
+    restart: unless-stopped
+    volumes:
+      - "./app/html:/var/www/html"
+    depends_on:
+      - msyql
+    links:
+      - "msyql"
+    networks:
+      - proxynet
+
+  nginx:
+    build:
+      context: ./docker/nginx
+    restart: unless-stopped
+    container_name: ${APP_NAME:?err}-nginx
+    # restart: "on-failure"
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - "php-fpm"
+    volumes:
+      - "./app/html:/var/www/html/"
+      - "./docker/nginx/config:/etc/nginx/conf.d/:ro"
+      - "./app/certbot/conf:/etc/letsencrypt"
+      - "./app/certbot/www:/var/www/certbot"
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    networks:
+      - proxynet
+
+  phpmyadmin:
+    build:
+      context: ./docker/phpmyadmin
+    restart: unless-stopped
+    container_name: ${APP_NAME:?err}-pma
+    # links:
+    #   - "mysql"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    expose:
+      - 80
+    ports: 
+      - "8080:80"
+    networks:
+      - proxynet
+
+  certbot:
+    image: certbot/certbot
+    container_name: ${APP_NAME:?err}-certbot
+    volumes:
+      - "./app/certbot/conf:/etc/letsencrypt"
+      - "./app/certbot/www:/var/www/certbot"
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - proxynet
+
+networks:
+  proxynet:
+    name: lemp-network

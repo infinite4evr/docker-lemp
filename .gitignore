@@ -1,0 +1,4 @@
+/app/certbot/*
+/app/html/*
+!app/html/test
+/app/mysql-db/*
