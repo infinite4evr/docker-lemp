@@ -1,8 +1,4 @@
-* * * * *  php /var/www/html/rockads/AAE9q83ixIPnUdw_PVNUd1txWYPGcO20sVM/index.php Webhook/cronJob >> /var/log/cron.log 2>&1
-* * * * *  php /var/www/html/marvel_ads/AAE9q83ixIPnUdw_PVNUd1txWYPGcO20sVM/index.php Webhook/cronJob >> /var/log/cron.log 2>&1
-* * * * *  php /var/www/html/fatherads/AAE9q83ixIPnUdw_PVNUd1txWYPGcO20sVM/index.php Webhook/cronJob >> /var/log/cron.log 2>&1
-* * * * *  php /var/www/html/rsads/AAE9q83ixIPnUdw_PVNUd1txWYPGcO20sVM/index.php Webhook/cronJob >> /var/log/cron.log 2>&1
-* * * * *  php /var/www/html/adcheap/AAE9q83ixIPnUdw_PVNUd1txWYPGcO20sVM/index.php Webhook/cronJob >> /var/log/cron.log 2>&1
+* * * * *  php /var/www/html/index.php Webhook/cronJob >> /var/log/cron.log 2>&1
 
 
 # Don't remove the empty line at the end of this file. It is required to run the cron job
